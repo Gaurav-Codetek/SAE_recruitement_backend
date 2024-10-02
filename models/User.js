@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
         type: String, // You can change this to Date if you want to store it as a Date
         required: true
     },
-    "Email Address": {
+    "Email": {
         type: String,
         required: true
     },
@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    "Contact Number": {
+    "ContactNumber": {
         type: Number,
         required: true
     },
@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    "Roll Number": {
+    "RollNumber": {
         type: String,
         required: true
     },

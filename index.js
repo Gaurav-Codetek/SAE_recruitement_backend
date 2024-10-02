@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const mongo = require("./db.js");
 const collect = require("./models/User.js");
+const select = require("./models/Selected.js");
 const app = express();
 const PORT = process.env.PORT || 4300;
 
@@ -19,17 +20,49 @@ app.use(express.json());
 // Get user data (with optional search by name)
 app.get("/getUserData", async (req, res) => {
   const { name } = req.query; // Extract name from query parameters
-  
+
   let query = {};
-  
+
   // If a name is provided, perform a case-insensitive search on the Name field
   if (name) {
-    query = { Name: { $regex: name, $options: "i" } };
+    query = { Email: { $regex: name, $options: "i" } };
   }
 
   try {
-    const users = await collect.find(query); // Query MongoDB
+    const users = await collect.find(query);
+    console.log(users); // Query MongoDB
     res.json(users); // Return the users as JSON response
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch user data" });
+  }
+});
+
+app.get("/getResult", async (req, res) => {
+  const { name } = req.query; // Extract name from query parameters
+
+  
+
+  // If a name is provided, perform a case-insensitive search on the Name field
+  if (name) {
+    query = { Email: { $regex: name, $options: "i" } };
+  }
+
+  try {
+    const users = await select.findOne({ Email: name });
+    console.log(users);
+    if (users) {
+      console.log(users)
+      const response = {
+        match: "true",
+      };
+      res.json(response);
+    } else {
+      const response = {
+        match: "false",
+      };
+      res.json(response);
+    } // Query MongoDB
+    // Return the users as JSON response
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch user data" });
   }
