@@ -21,15 +21,23 @@ app.use(express.json());
 app.get("/getUserData", async (req, res) => {
   const { name } = req.query; // Extract name from query parameters
 
+  // Check if name is provided, if not return an error or a custom message
+  if (!name) {
+    return res.status(400).json({ error: "Name parameter is required." });
+  }
+
   let query = {};
 
-  // If a name is provided, perform a case-insensitive search on the Name field
+  // Perform a case-insensitive search on the Email field if name is provided
   if (name) {
     query = { Email: { $regex: name, $options: "i" } };
   }
 
   try {
     const users = await collect.find(query);
+    if (users.length === 0) {
+      return res.status(404).json({ message: "No users found" });
+    }
     console.log(users); // Query MongoDB
     res.json(users); // Return the users as JSON response
   } catch (err) {
@@ -37,10 +45,9 @@ app.get("/getUserData", async (req, res) => {
   }
 });
 
+
 app.get("/getResult", async (req, res) => {
   const { name } = req.query; // Extract name from query parameters
-
-  
 
   // If a name is provided, perform a case-insensitive search on the Name field
   if (name) {
@@ -51,7 +58,7 @@ app.get("/getResult", async (req, res) => {
     const users = await select.findOne({ Email: name });
     console.log(users);
     if (users) {
-      console.log(users)
+      console.log(users);
       const response = {
         match: "true",
       };
